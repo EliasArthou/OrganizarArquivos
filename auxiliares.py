@@ -315,7 +315,7 @@ def mid(s, offset, amount):
     return s[(offset - 1):(offset - 1) + amount]
 
 
-def adicionarcabecalhopdf(arquivo, arquivodestino, cabecalho):
+def adicionarcabecalhopdf(arquivo, arquivodestino, cabecalho, reportlab=None):
     """
     :param arquivo: arquivo PDF de "entrada".
     :param arquivodestino: arquivo PDF de saída (já com o cabeçalho).
@@ -501,3 +501,27 @@ def criarpasta(caminho, cliente):
     caminhofinal = os.path.join(caminho, cliente)
     if not os.path.isdir(caminhofinal):
         os.mkdir(caminhofinal)
+
+
+def escreverlistaexcelog(caminho, lista):
+    """
+    :param caminho: caminho do arquivo a ser escrito.
+    :param lista: lista a ser adicionada no arquivo do caminho dado.
+    """
+    import pandas as pd
+
+    df = pd.DataFrame(lista)
+
+    writer = pd.ExcelWriter(caminho, engine='xlsxwriter')
+    df.to_excel(writer, sheet_name='Lista', index=False)
+    writer._save()
+
+
+def acertardataatual():
+    """
+    :return: retorna data e hora do sistema formatado.
+    """
+    from datetime import datetime
+
+    textodata = datetime.now()
+    return textodata.strftime('%Y_%m_%d_%H_%M_%S')
