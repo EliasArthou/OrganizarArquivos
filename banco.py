@@ -25,7 +25,7 @@ class Banco:
         :return: O resultado da consulta em uma lista.
         """
         self.cursor.execute(sql)
-        resultado = self.cursor.fetchall()
+        resultado = [item[0] for item in self.cursor.fetchall()]
         return resultado
 
     def adicionardf(self, tabela, df, indicelimpeza=-1):

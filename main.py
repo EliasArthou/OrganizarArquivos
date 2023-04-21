@@ -21,8 +21,6 @@ else:
         caminhobanco = aux.caminhoselecionado(titulojanela='Selecione o arquivo de banco de dados:',
                                               tipoarquivos=[('Banco ' + senha.empresa, '*.WMB'), ('Todos os Arquivos:', '*.*')])
 
-caminhoacriar = aux.caminhoselecionado(3, 'Caminho onde organizar')
-
 if len(caminhobanco) == 0:
     messagebox.msgbox('Selecione o caminhob do Banco de Dados!', messagebox.MB_OK, 'Erro Banco')
     sys.exit()
@@ -34,18 +32,23 @@ if len(caminhoorigem) == 0:
     messagebox.msgbox('Selecione a pasta de origem!', messagebox.MB_OK, 'Erro Banco')
     sys.exit()
 
+caminhoacriar = aux.caminhoselecionado(3, 'Caminho onde organizar')
+
 if len(caminhoacriar) == 0:
     messagebox.msgbox('Selecione a pasta de destino!', messagebox.MB_OK, 'Erro Banco')
     sys.exit()
+
+if not os.path.isdir(os.path.join(caminhoacriar, 'Ativo')):
+    os.mkdir(os.path.join(caminhoacriar, 'Ativo'))
+
+if not os.path.isdir(os.path.join(caminhoacriar, 'Deletados')):
+    os.mkdir(os.path.join(caminhoacriar, 'Deletados'))
 
 data = bd.Banco(caminhobanco)
 
 resultado = data.consultar(senha.sqlclientes)
 
 data.fecharbanco()
-
-for cliente in resultado:
-    aux.criarpasta(caminhoacriar, cliente[0])
 
 # dicionário com pares de pastas para cada tipo de arquivo
 pastas = {
@@ -79,7 +82,10 @@ for pasta, subpastas, arquivos in os.walk(caminhoorigem):
                 continue
 
             # determinar o diretório de destino com base no código e no tipo de arquivo
-            pasta_destino = os.path.join(caminhoacriar, codigo[:4])
+            if codigo[:4] in resultado:
+                pasta_destino = os.path.join(caminhoacriar, 'Ativo', codigo[:4])
+            else:
+                pasta_destino = os.path.join(caminhoacriar, 'Deletados', codigo[:4])
             if not os.path.exists(pasta_destino):
                 os.mkdir(pasta_destino)
 
