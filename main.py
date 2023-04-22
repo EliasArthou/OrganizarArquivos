@@ -52,19 +52,23 @@ data.fecharbanco()
 
 # dicionário com pares de pastas para cada tipo de arquivo
 pastas = {
-    "ADITIVOS ADMINISTRAÇÃO": "Aditivo",
-    "ADITIVOS LOCAÇÃO": "Aditivo",
-    "CONTRATOS ADMINISTRAÇÃO": "Contrato",
+    "ADITIVOS ADMINISTRAÇÃO": "AditivoAdm",
+    "ADITIVOS LOCAÇÃO": "AditivoLoc",
+    "CONTRATOS ADMINISTRAÇÃO": "ContratoAdm",
     "CONTRATOS LOCAÇÃO": "ContratoLoc",
-    "APOLICES": "Apolices"
+    "APOLICES": "Apolices",
+    "CONTRATOS DELETADOS - ADMINISTRAÇÃO": "ContratoAdm",
+    "CONTRATOS DELETADOS - LOCAÇÃO": "ContratoLoc"
 }
+# Cabeçalho do arquivo de Saída
+listachaves = ['Origem', 'Destino']
 
 # loop nos arquivos da pasta de origem
-listachaves = ['Origem', 'Destino']
 for pasta, subpastas, arquivos in os.walk(caminhoorigem):
     for arquivo in arquivos:
         # extrair o código a partir do nome do arquivo usando expressão regular
-        codigo = re.findall(r'\d+', arquivo)
+        # codigo = re.findall(r'\d+', arquivo)
+        codigo = re.findall(r'\d{4,}', arquivo)
         origem = os.path.join(pasta, arquivo)
         destino = ''
         if isinstance(codigo, list) and len(codigo) > 0:
@@ -88,8 +92,6 @@ for pasta, subpastas, arquivos in os.walk(caminhoorigem):
                 pasta_destino = os.path.join(caminhoacriar, 'Deletados', codigo[:4])
             if not os.path.exists(pasta_destino):
                 os.mkdir(pasta_destino)
-
-            # pasta_destino = os.path.join(pasta_destino, pastas[tipo_arquivo])
 
             # copiar o arquivo para o diretório de destino com o nome padronizado
             nome_padronizado = f"{pastas[tipo_arquivo]}{codigo}.pdf"
